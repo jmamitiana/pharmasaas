@@ -2,6 +2,42 @@
 
 @section('title', __('stock'))
 
+@push('scripts')
+<script>
+    const REFRESH_INTERVAL = {{ config('app.stock_refresh_interval', 300000) }};
+    
+    function refreshStock() {
+        fetch('{{ route("stock.refresh") }}', {
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Stock refreshed:', data.length, 'products');
+            showNotification('Stock refreshed successfully', 'success');
+        })
+        .catch(error => {
+            console.error('Error refreshing stock:', error);
+            showNotification('Error refreshing stock', 'error');
+        });
+    }
+    
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.className = `fixed top-4 right-4 px-4 py-2 rounded-lg shadow-lg z-50 ${type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white`;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    }
+    
+    setInterval(refreshStock, REFRESH_INTERVAL);
+</script>
+@endpush
+
 @section('content')
 <div class="bg-white rounded-lg shadow">
     <div class="p-6 border-b border-gray-200 flex justify-between items-center">

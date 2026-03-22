@@ -13,6 +13,7 @@ return [
     'locale' => 'fr',
     'fallback_locale' => 'en',
     'faker_locale' => 'fr_MG',
+    'stock_refresh_interval' => env('STOCK_REFRESH_INTERVAL', 300000),
     'key' => env('APP_KEY'),
     'cipher' => 'AES-256-CBC',
     'maintenance' => [

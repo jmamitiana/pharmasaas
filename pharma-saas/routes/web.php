@@ -12,6 +12,9 @@ use App\Http\Controllers\Admin\BackupController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\WarehouseController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\StockController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -56,6 +59,14 @@ Route::middleware(['auth', 'language'])->group(function () {
         Route::resource('suppliers', SupplierController::class);
         Route::resource('warehouses', WarehouseController::class);
     });
+    
+    Route::middleware(['permission:manage_users'])->group(function () {
+        Route::resource('users', UserController::class);
+        Route::resource('roles', RoleController::class);
+        Route::get('permissions', [RoleController::class, 'permissions'])->name('permissions.index');
+    });
+    
+    Route::get('stock/refresh', [StockController::class, 'refresh'])->name('stock.refresh');
 });
 
 Route::get('language/{locale}', function ($locale) {
